@@ -3,14 +3,14 @@ local busted = require("plenary/busted")
 
 local eq = assert.are.same
 local cur_dir = vim.fn.expand("%:p:h")
-local status = require("plenary.reload").reload_module("go.nvim")
-local status = require("plenary.reload").reload_module("nvim-treesitter")
+-- local status = require("plenary.reload").reload_module("go.nvim")
+-- status = require("plenary.reload").reload_module("nvim-treesitter")
 
 -- local ulog = require('go.utils').log
 describe("should run gotags", function()
   -- vim.fn.readfile('minimal.vim')
   -- vim.fn.writefile(vim.fn.readfile('fixtures/fmt/hello.go'), name)
-  status = require("plenary.reload").reload_module("go.nvim")
+  -- status = require("plenary.reload").reload_module("go.nvim")
   it("should run add json tags", function()
     --
     local name = vim.fn.tempname() .. ".go"

@@ -1,9 +1,14 @@
 set rtp +=.
 set rtp +=../plenary.nvim/
-
+set rtp +=../nvim-treesitter
 
 runtime! plugin/plenary.vim
 
+lua vim.fn.setenv("DEBUG_PLENARY", true)
+runtime! plugin/plenary.vim
+runtime! plugin/nvim-treesitter.vim
+runtime! plugin/playground.vim
+runtime! plugin/nvim-autopairs.vim
 
 set noswapfile
 set nobackup
