@@ -20,5 +20,5 @@ lua << EOF
 _G.test_rename = true
 _G.test_close = true
 require("plenary/busted")
-require("lsp_signature").setup()
+require("go").setup()
 EOF
