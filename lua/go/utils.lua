@@ -92,7 +92,11 @@ util.log = function(...)
   end
   if #str > 2 then
     if log_path ~= nil and #log_path > 3 then
-      local f = io.open(log_path, "a+")
+      local f, err = io.open(log_path, "a+")
+      if err then
+        print("failed to open log")
+        return
+      end
       if not f then
         error('open file ' .. log_path, f)
       end
