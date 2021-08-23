@@ -74,7 +74,7 @@ util.handle_job_data = function(data)
 end
 
 util.log = function(...)
-  if _GO_NVIM_CFG.verbose == false then
+  if not _GO_NVIM_CFG.verbose then
     return
   end
   local arg = {...}
