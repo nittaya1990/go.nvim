@@ -25,5 +25,8 @@ lua << EOF
 _G.test_rename = true
 _G.test_close = true
 require("plenary/busted")
-require("go").setup()
+require("go").setup({
+  gofmt = 'gofumpt',
+  lsp_cfg = false,
+})
 EOF
