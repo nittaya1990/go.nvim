@@ -81,8 +81,10 @@ describe("should run gofmt", function()
     vim.fn.writefile(lines, name)
     local cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
-    local gofmt = require("go.format")
-    gofmt.goimport()
+
+    vim.cmd([[cd %:p:h]])
+    require("go.format").goimport()
+    print("workspaces:", vim.inspect(vim.lsp.buf.list_workspace_folders()))
     vim.wait(100, function()
     end)
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
@@ -90,7 +92,8 @@ describe("should run gofmt", function()
     cmd = "bd! " .. name
     vim.cmd(cmd)
   end)
-  it("should run import from file buffer", function()
+  it("should run import from file buffer with gofumpts", function()
+    _GO_NVIM_CFG.goimport = 'gofumports'
     local path = cur_dir .. "/lua/tests/fixtures/fmt/goimports.go" -- %:p:h ? %:p
     local expected = vim.fn.join(vim.fn.readfile(cur_dir
                                                      .. "/lua/tests/fixtures/fmt/goimports_golden.go"),
@@ -101,7 +104,7 @@ describe("should run gofmt", function()
     local cmd = " silent exe 'e " .. name .. "'"
     vim.fn.writefile(lines, name)
     vim.cmd(cmd)
-
+    vim.cmd([[cd %:p:h]])
     print("code write to " .. name)
     local gofmt = require("go.format")
     gofmt.goimport(true)
