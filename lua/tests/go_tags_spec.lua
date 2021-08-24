@@ -72,6 +72,12 @@ describe("should run gotags", function()
     -- enable the channel response
     vim.wait(100, function()
     end)
+
+    -- format the code
+    local gofmt = require("go.format")
+    gofmt.gofmt()
+    vim.wait(100, function()
+    end)
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
@@ -106,6 +112,12 @@ describe("should run gotags", function()
     -- enable the channel response
     vim.wait(100, function()
     end)
+
+    local gofmt = require("go.format")
+    gofmt.gofmt()
+    vim.wait(100, function()
+    end)
+
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
@@ -140,6 +152,12 @@ describe("should run gotags", function()
     -- enable the channel response
     vim.wait(100, function()
     end)
+
+    local gofmt = require("go.format")
+    gofmt.gofmt()
+    vim.wait(100, function()
+    end)
+
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
