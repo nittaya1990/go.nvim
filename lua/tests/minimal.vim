@@ -27,7 +27,7 @@ _G.test_close = true
 require("plenary/busted")
 require("go").setup({
   gofmt = 'gofumpt',
-  goimport = "gofumports",
+  goimport = "goimports",
   lsp_cfg = true,
 })
 EOF

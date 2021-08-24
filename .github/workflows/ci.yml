@@ -23,6 +23,7 @@ jobs:
         run: |
           GO111MODULE=on go get golang.org/x/tools/gopls@latest
           GO111MODULE=on go get mvdan.cc/gofumpt
+          go get golang.org/x/tools/cmd/goimports
           go get github.com/fatih/gomodifytags
           go get -u github.com/segmentio/golines
           mkdir -p ~/.local/share/nvim/site/pack/vendor/start
