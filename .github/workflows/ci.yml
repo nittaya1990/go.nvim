@@ -4,6 +4,8 @@ on: [push, pull_request]
 
 jobs:
   unit_tests:
+    permissions:
+      contents: read
     name: unit tests
     runs-on: ${{ matrix.os }}
     strategy:
