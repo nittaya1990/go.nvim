@@ -1,8 +1,9 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'neovim/nvim-lspconfig'
-" Plug 'ray-x/go.nvim'
-Plug '~/github/go.nvim'
+Plug 'ray-x/go.nvim'
+Plug 'ray-x/guihua.lua'
+" Plug '~/github/go.nvim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
@@ -17,9 +18,8 @@ call plug#end()
 " No need for rquire('lspconfig'), navigator will configure it for you
 lua <<EOF
 require('go').setup({
-  goimport='goimport', -- goimport command
+  goimports = 'goimports', -- goimports command
   gofmt = 'gofumpt', --gofmt cmd,
-  max_line_len = 120, -- max line length in goline format
   tag_transform = false, -- tag_transfer  check gomodifytags for details
   verbose = true,  -- output loginf in messages
   log_path = vim.fn.expand("$HOME") .. "/tmp/gonvim.log",
@@ -38,5 +38,9 @@ require('go').setup({
   dap_debug_keymap = true, -- set keymaps for debugger
   dap_debug_gui = true, -- set to true to enable dap gui, highly recommand
   dap_debug_vt = true, -- set to true to enable dap virtual text
+
+  test_runner = 'richgo', -- richgo, go test, richgo, dlv, ginkgo
+  verbose_tests = true, -- set to add verbose flag to tests
+  run_in_floaterm = true -- set to true to run in float window.
 })
 EOF

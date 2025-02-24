@@ -1,0 +1,463 @@
+go.txt: plugin for the Go programming language
+
+==============================================================================
+INTRODUCTION                                                          *go-nvim*
+
+
+go.nvim is a neovim plugin for the Go programming language. This is the
+reference documentation.
+
+Table of contents~
+
+1. Motions           |go-nvim-motions|
+2. Text objects      |go-nvim-text-objects|
+3. Mappings          |go-nvim-mappings|
+4. Filetypes         |go-nvim-filetypes|
+5. Binaries          |go-nvim-binaries|
+6. Commands          |go-nvim-commands|
+7. Options           |go-nvim-options|
+
+
+==============================================================================
+MOTIONS                                                       *go-nvim-motions*
+
+                                                     *go-nvim-v_]]* *go-nvim-]]*
+]]                      Go [count] top-level declarations forward. A top-level
+                        declaration is a `func`, `type`, `var`, `const`, or `import`.
+                        In |ft-gopresent| files it jumps [count] sections
+                        forward
+
+                                                     *go-nvim-v_[[* *go-nvim-[[*
+[[                      Go [count] top-level declarations backwards. In
+                        |ft-gopresent| it jumps [count] sections backwards.
+
+
+==============================================================================
+TEXT OBJECTS                                             *go-nvim-text-objects*
+
+text objects is provided through treesitter text-objects plugin
+                                                     *go-nvim-v_af* *go-nvim-af*
+af                      "a function": complete function body and any preceding
+                        documentation comment.
+
+                                                     *go-nvim-v_if* *go-nvim-if*
+if                      "inner function": function contents without the
+                        signature.
+
+                                                     *go-nvim-v_ac* *go-nvim-ac*
+ac                      "a comment": the entire comment block, including the
+                        comment characters themselves.
+
+                                                     *go-nvim-v_ic* *go-nvim-ic*
+ic                      "inner comment": content of the function but exclude
+                        the start and end markers.
+
+
+==============================================================================
+MAPPINGS                                                     *go-nvim-mappings*
+
+go.nvim does not provide default keymappings.
+keymap in debug mode
+
+c                      continue
+n                      next
+s                      step
+o                      stepout
+S                      cap S: stop debug
+u                      up
+D                      cap D: down
+C                      cap C: run to cursor
+b                      toggle breakpoint
+P                      cap P: pause
+p                      print, hover value (also in visual mode)
+
+==============================================================================
+FILETYPES                                                   *go-nvim-filetypes*
+
+                                                                       *ft-go*
+go~
+                        go files; default ft for go files
+                        You need to set the |filetype| to `go` to run commands
+                        provided by the pluginfor example: >
+                vim +'set ft=go' +GoSetup +'q!'
+
+
+                                                                    *ft-gomod*
+gomod~
+                        go.mod file; there are no options.
+
+                                                       *ft-gotext* *ft-gohtml*
+gotext gohtml~
+                        text/template and html/template. Automatically applied
+                        to files ending with the `.gotext` and `.gohtml`.
+                        gohtml loads the standard html syntax highlighting,
+                        but they are otherwise identical.
+
+
+==============================================================================
+BINARIES                                                   *go-nvim-binaries*
+
+        Several binary tools are supported;
+                go              `go install`
+                gotest          `go test`
+                golint          `golangci-lint`
+                gotags
+                golines
+                goimports
+
+
+        settings below will take effect (so you'll need to use
+        `:Dispatch go build ./cmd/pkg`; the package name won't be added
+        automatically).
+
+                                                          *go-nvim-compiler-go*
+go ~
+
+        go.nvim  using go to `go list` `go build` `go run` `go test`
+
+                                                    *b:go-nvim_build_command*
+        Command to build Go code.
+
+                                                       *go-nvim-compiler-gotest*
+gotest~
+        with `go test`, `richgo`, or `ginkgo`
+
+                                                       *go-nvim-compiler-golint*
+golint~
+
+        with golangcl-lint
+
+==============================================================================
+COMMANDS                                                     *go-nvim-commands*
+
+:GoInstallBinaries                                         *:GoInstallBinaries*
+        Make sure all dependent tools are downloaded and installed.
+
+:GoUpdateBinaries                                          *:GoUpdataBinaries*
+        Make sure all tools are updated.
+
+
+:GoInstallBinary {tool_name}                                  *:GoInstallBinary*
+        Make sure all dependent tools are downloaded and installed.
+
+:GoUpdateBinary {tool_name}                                  *:GoUpdataBinary*
+        Make sure tool_name are up to date.
+
+
+:GoCoverage [flags]                                              *:GoCoverage*
+        Run `go test -cover` and highlight lines reported as covered and
+        uncovered.
+
+        [flags] are passed to the `go test` command; there are two special
+        flags:
+        -t coveragefile  load coverage data from coveragefile
+
+        -p       Coverage for current package only
+        -r       Remove existing highlighting in current buffer.
+        -R       Remove all existing highlighting.
+        -t       Toggle display of highlighting.
+        -m       show coverage statistics in qf.
+
+                                 *hl-goCoverageCovered* *hl-goCoverageUncover*
+
+        Override the goCoverageCovered and/or goCoverageUncover highlight
+        groups if the defaults don't work well for you.
+                augroup my-go-nvim-coverage
+
+                        au!
+                        au Syntax go hi goCoverageCovered guibg=green
+                        au Syntax go hi goCoverageUncover guibg=brown
+                augroup end
+
+:GoImports {package_name}                                         *:GoImports*
+        Add, modify imports.
+
+:GoBuild {-tags=tagname}{package_name}                            *:GoBuild*
+        Build the package in the current directory. (|:pwd|)
+        -g: build with debug info
+        %: build current file
+        %:h: build current package
+
+:GoRun {args}                            *:GoRun*
+        equal to "go run " with args. You can also specify -F to run in floaterm
+
+:GoStop                                          *:GoStop*
+        stop the task started with GoRun
+:GoTest {-cnfpt} {-t tagname} {package_name} {-a args}                     *:GoTest*
+        -c: compile test in current package
+        -n: test nearest
+        -v: test verbose mode
+        -f: test current file
+        -p: test current package
+        -t: compile tag
+        -a: extra args for test, check `go help testflag` concatenate
+        with '\ ' if there are any spaces or multiple args
+        -b {build_args}: e.g. `-b -gcflags="all-N\ -l"`
+        -n {count}: disable cache -count={count}
+        package_name: test package
+
+:GoTestSum {packagename} {-w} {gotestsum_args}                 *:GoTestSum*
+        -w: watch file changes and re-run test
+        packagename: test package
+        gottestsum_args: gotestsum arguments,
+          e.g. GoTestSum -- -tags=integration ./io/http
+
+
+:GoTestFile {-t tagname}{-v}                              *:GoTestFile*
+        Test current file
+        -v: verbose mode
+
+:GoTestFunc {args} {-t tagname}                           *:GoTestFunc*
+        Test current function
+        {args} -s: select the function you want to run
+        -v: verbose mode
+
+:GoAddTest                                                  *:GoAddTest*
+        Add unit test for current function
+
+:GoFmt  {-a}                                                *:GoFmt*
+        Format code with golines+gofumpt. -a: apply to all files
+:GoVet                                                          *:GoVet*
+        Run go vet
+:GoCheat query                                                  *:GoCheat*
+        Run `curl cheat.sh/go/query`
+:GoGet {package_url}                                            *:GoGet*
+        Run go get {package_url}, if package_url not provided, will parse
+        current line and use it as url if valid
+
+:GoLint                                                           *:GoLint*
+        Run golangci-lint
+
+
+:GoRename                                                         *:GoRename*
+        Rename the identifier under the cursor.
+
+:Gomvp                                                           *:Gomvp*
+        Rename the module name under the cursor.
+
+:{range}GoAddTag [flags]                                               *:GoAddTags*
+        Add, modify, or remove struct tags. Will only apply to the fields in
+        {range} if it's given, or applied to all fields in the struct if it's
+        omitted.
+
+        All tags in [flags] will be added. A tag can be followed by a `,`
+        (comma) and an option to add the option, or set to a specific name
+        with `tag:name`.
+
+        Tags can be removed by using `-rm tag`; options can be removed by
+        using `-rm tag,opt`
+
+        The value of |g:go-nvim_tag_default| is used if no [flags] is given.
+
+        options:
+                -transform (-t)
+                -add-options (-a) {opts}
+        Examples: >
+                :GoTag json                  Add tag "json"
+                :GoTag json,omitempty        Add tag with omitempty, or add
+                                              omitempty for fields where it
+                                              already exists.
+                :GoTag json,omitempty db     Add two tags
+                :GoAddTags sometag:foo        Set the tag sometag to the
+                                              string foo.
+                :GoTags json -rm yaml         Combine add and rm
+<
+
+:{range}GoRmTag [flags]                                                 *:GoRmTags*
+        Remove struct tags. Will apply to the fields in
+        {range} if it's given, or applied to all fields in the struct if it's
+        omitted.
+
+        Examples: >
+                :GoRmTag json              Remove a tag
+                :GoRmTag json,omitempty    Remove the omitempty option
+                :GoRmTag json -rm db       Remove two tags
+                :GoRmTag                   Remove all tags
+
+:{range}GoClearTag                                                   *:GoClearTags*
+        Remove all tags
+
+:GoDebug {options}                                                       *:GoDebug*
+        Start debugger
+        options: -t(test), -R(restart), -n(nearest), -f(file), -s(stop), -b(breakpoint)
+        -h(help), -c(compile), -a (attach remote)
+        If no option provided, will
+        1) check launch.json and launch the valid configuration from
+        launch.json, fallback to GoDebug file
+        2) With -t option, if current file is not test file, will switch to test file
+        and run test for current function
+        3) If cursor inside scope of a test function, will debug current test function,
+        if cursor inside a test file, will debug current test file
+
+:GoDbgConfig                                                        *:GoDbgConfig*
+        Open launch.json
+
+:GoDbgKeys                                                          *:GoDbgKeys*
+        Display keymaps for debugger
+
+:GoDbgStop                                                          *:GoDbgStop*
+        Stop debug session and unmap all keymaps, same as GoDebug -s
+
+:GoDbgContinue                                                      *:GoDbgContinue*
+        Continue debug session, keymap `c`
+
+:GoCreateLaunch                                                     *:GoCreateLaunch*
+        Create a sample launch.json configuration file
+
+:GoBreakToggle                                                     *:GoBreakToggle*
+        Debugger breakpoint toggle
+
+:GoBreakSave                                                       *:GoBreakSave*
+        Debugger breakpoint save to project file
+
+:GoBreakLoad                                                       *:GoBreakLoad*
+        Debugger breakpoint load from project file
+
+:GoEnv {envfile} {load}                                            *:GoEnv*
+        Load envfile and set environment variable
+
+:GoAlt                                                                     *:GoAlt*
+        Open alternative file (test/go), Also GoAltS/GoAltV
+
+:GoDoc {options}                                                          *:GoDoc*
+        e.g. GoDoc fmt.Println
+
+:GoMockGen {options}                                      *:GoMockGen*
+        Generate mock with go mock
+        options:
+          -s source mode(default)
+          -i interface mode, provide interface name or put cursor on interface
+          -p package name default: mocks
+          -d destination directory, default: ./mocks
+
+:GoPkgOutline {options}                                                    *:GoPkgOutline*
+        show symbols inside a specific package in side panel/loclist
+        options: -f (floating win), -p package_name
+        default options: sidepanel, current package in vim buffer
+
+:GoImplements {options}                                                          *:GoImplements*
+        GoImplements calls vim.lsp.buf.implementation
+
+:GoImpl {options}                                                          *:GoImpl*
+        e.g. GoImpl {receiver} {interface}, will check if cursor is a valid
+        receiver, if you park cursor on struct name, receiver can be omitted.
+        if you park cursor on interface name, {interface} can be omitted.
+        e.g ":GoImpl io.Reader", or "GoImpl f *File io.Reader"  or "GoImpl
+        f io.Reader", or "GoImpl MyType", "GoImpl mt MyType"
+        you can use tab to complete the interface name.
+
+:GoToggleInlay
+        Toggle inlay hints for current buffer
+
+:GoTermClose
+        Closes the floating term.
+
+:["x]GoJson2Struct
+        Convert json (visual select) to go struct.
+        bang: put result to register
+        \"x : get json from register x
+
+:GoGenReturn
+        generate return values for current function
+
+:Govulncheck
+        run govulncheck on current project
+
+:Goenum
+        run goenum on current file
+
+:GoNew {filename}
+        create a new go file from template e.g. GoNew ./pkg/file.go
+
+==============================================================================
+OPTIONS                                                       *go-nvim-options*
+
+You can setup go.nvim with following options:
+
+{
+  goimports = "gopls", -- if set to 'gopls' will use gopls format, also goimports
+  gofmt = "gofumpt", -- if set to gopls will use gopls format
+  max_line_len = 120,
+  tag_transform = false,
+  test_dir = "",
+  comment_placeholder = "   ",
+  icons = { breakpoint = "🧘", currentpos = "🏃" }, -- set to false to disable
+  -- this option
+  verbose = false,
+  log_path = vim.fn.expand("$HOME") .. "/tmp/gonvim.log",
+  lsp_cfg = false, -- false: do nothing
+                   -- true: apply non-default gopls setup defined in go/lsp.lua
+                   -- if lsp_cfg is a table, merge table with with non-default gopls setup in go/lsp.lua, e.g.
+  lsp_gofumpt = false, -- true: set default gofmt in gopls format to gofumpt
+  lsp_on_attach = nil, -- nil: do nothing
+                       -- if lsp_on_attach is a function: use this function as on_attach function for gopls,
+                       -- when lsp_cfg is true
+  lsp_keymaps = true, -- true: apply default lsp keymaps
+  lsp_codelens = true,
+  diagnostic = {  -- set diagnostic to false to disable vim.diagnostic setup
+                  -- in go.nvim
+    hdlr = false, -- hook lsp diag handler and send diag to quickfix
+    underline = true,
+    -- virtual text setup
+    virtual_text = { spacing = 0, prefix = '■' },
+    signs = true,
+    update_in_insert = false,
+  },
+  lsp_inlay_hints = {
+    enable = true,
+
+    -- Only show inlay hints for the current line
+    only_current_line = false,
+
+    -- Event which triggers a refersh of the inlay hints.
+    -- You can make this "CursorMoved" or "CursorMoved,CursorMovedI" but
+    -- not that this may cause higher CPU usage.
+    -- This option is only respected when only_current_line and
+    -- autoSetHints both are true.
+    only_current_line_autocmd = "CursorHold",
+
+    -- whether to show variable name before type hints with the inlay hints or not
+    -- default: false
+    show_variable_name = true,
+
+    -- prefix for parameter hints
+    parameter_hints_prefix = "󰊕 ",
+    show_parameter_hints = true,
+
+    -- prefix for all the other hints (type, chaining)
+    other_hints_prefix = "=> ",
+
+    -- whether to align to the lenght of the longest line in the file
+    max_len_align = false,
+
+    -- padding from the left if max_len_align is true
+    max_len_align_padding = 1,
+
+    -- whether to align to the extreme right or not
+    right_align = false,
+
+    -- padding from the right if right_align is true
+    right_align_padding = 6,
+
+    -- The color of the hints
+    highlight = "Comment",
+  },
+  gopls_remote_auto = true,
+  gocoverage_sign = "█",
+  sign_priority = 7,
+  dap_debug = true,
+  dap_debug_gui = true,
+  dap_debug_keymap = true, -- true: use keymap for debugger defined in go/dap.lua
+                           -- false: do not use keymap in go/dap.lua.  you must define your own.
+                           -- windows: use visual studio style of keymap
+  dap_vt = true, -- false, true and 'all frames'
+  textobjects = true,
+  gopls_cmd = nil, --- you can provide gopls path and cmd if it not in PATH, e.g. cmd = {  "/home/ray/.local/nvim/data/lspinstall/go/gopls" }
+  build_tags = "", --- you can provide extra build tags for tests or debugger
+  test_runner = "go", -- one of {`go`, `richgo`, `dlv`, `ginkgo`}
+  run_in_floaterm = false, -- set to true to run in float window.
+  luasnip = false, -- set true to enable included luasnip
+  iferr_vertical_shift = 4 -- defines where the cursor will end up vertically from the begining of if err statement after GoIfErr command
+}
+
+vim:tw=78:ts=8:sts=8:sw=8:ft=help:norl:expandtab
