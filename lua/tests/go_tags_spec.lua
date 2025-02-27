@@ -6,8 +6,12 @@ local cur_dir = vim.fn.expand("%:p:h")
 -- local status = require("plenary.reload").reload_module("go.nvim")
 -- status = require("plenary.reload").reload_module("nvim-treesitter")
 
+-- time to wait for action to take effect
+local wait_time = 500
+
 -- local ulog = require('go.utils').log
 describe("should run gotags", function()
+  local cmd
   -- vim.fn.readfile('minimal.vim')
   -- vim.fn.writefile(vim.fn.readfile('fixtures/fmt/hello.go'), name)
   -- status = require("plenary.reload").reload_module("go.nvim")
@@ -20,7 +24,7 @@ describe("should run gotags", function()
     local expected = vim.fn.join(vim.fn.readfile(cur_dir
                                                      .. "/lua/tests/fixtures/tags/add_all_golden.go"),
                                  "\n")
-    local cmd = " silent exe 'e " .. name .. "'"
+    cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
     local bufn = vim.fn.bufnr("")
 
@@ -36,13 +40,13 @@ describe("should run gotags", function()
     local gotags = require("go.tags")
     gotags.add()
     -- enable the channel response
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    local cmd = "bd! " .. name
+    cmd = "bd! " .. name
     vim.cmd(cmd)
   end)
   it("should rm json tags", function()
@@ -54,7 +58,7 @@ describe("should run gotags", function()
     local expected = vim.fn.join(vim.fn.readfile(cur_dir
                                                      .. "/lua/tests/fixtures/tags/add_all_input.go"),
                                  "\n")
-    local cmd = " silent exe 'e " .. name .. "'"
+    cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
     local bufn = vim.fn.bufnr("")
 
@@ -70,19 +74,19 @@ describe("should run gotags", function()
     local gotags = require("go.tags")
     gotags.rm('json')
     -- enable the channel response
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
 
     -- format the code
     local gofmt = require("go.format")
     gofmt.gofmt()
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    local cmd = "bd! " .. name
+    cmd = "bd! " .. name
     vim.cmd(cmd)
   end)
   it("should run clear json tags by default", function()
@@ -94,7 +98,7 @@ describe("should run gotags", function()
     local expected = vim.fn.join(vim.fn.readfile(cur_dir
                                                      .. "/lua/tests/fixtures/tags/add_all_input.go"),
                                  "\n")
-    local cmd = " silent exe 'e " .. name .. "'"
+    cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
     local bufn = vim.fn.bufnr("")
 
@@ -110,19 +114,19 @@ describe("should run gotags", function()
     local gotags = require("go.tags")
     gotags.rm()
     -- enable the channel response
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
 
     local gofmt = require("go.format")
     gofmt.gofmt()
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
 
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    local cmd = "bd! " .. name
+    cmd = "bd! " .. name
     vim.cmd(cmd)
   end)
   it("should clear all tags", function()
@@ -135,7 +139,7 @@ describe("should run gotags", function()
     local expected = vim.fn.join(vim.fn.readfile(cur_dir
                                                      .. "/lua/tests/fixtures/tags/add_all_input.go"),
                                  "\n")
-    local cmd = " silent exe 'e " .. name .. "'"
+    cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
     local bufn = vim.fn.bufnr("")
 
@@ -151,19 +155,19 @@ describe("should run gotags", function()
     local gotags = require("go.tags")
     gotags.rm()
     -- enable the channel response
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
 
     local gofmt = require("go.format")
     gofmt.gofmt()
-    vim.wait(100, function()
+    vim.wait(wait_time, function()
     end)
 
     local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    local cmd = "bd! " .. name
+    cmd = "bd! " .. name
     vim.cmd(cmd)
   end)
 end)
